@@ -39,11 +39,22 @@ class Product {
   static findById(productId){
     const db = getDb()
     return db.collection('products').find({_id:new mongodb.ObjectId(productId)}).next()
-    .then((product)=>{
+    .then(()=>{
       // console.log(product)
-      return product
+      console.log('deleted')
     })
     .catch(err=>console.log(err))
+  }
+  static delById(prodId){
+    const db = getDb();
+    console.log(prodId)
+    return db.collection('products').deleteOne({_id:new mongodb.ObjectId(prodId)})
+    .then((product)=>{
+      return product
+    })
+    .catch(error =>{
+      console.log(error)
+    })
   }
 }
 
