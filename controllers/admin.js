@@ -1,5 +1,6 @@
 const Product = require('../models/product');
-const mongodb = require('mongodb')
+const mongodb = require('mongodb');
+const User = require('../models/user');
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -86,3 +87,90 @@ exports.postDeleteProduct = (req, res, next) => {
     })
     .catch(err => console.log(err));
 };
+
+exports.getUsers = (req,res,next) => {
+  User.getUser()
+  .then(users=>{
+    res.render('admin/users', {
+      usrs: users,
+      pageTitle: 'Admin Products',
+      path: '/admin/users'
+    });
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+
+exports.addUsers = (req,res,next) =>{
+  res.render('admin/addusers', {
+    pageTitle: 'Add User',
+    path: '/admin/addUsers',
+    editing: false
+  });
+}
+
+exports.postAddUsers = (req,res,next) => {
+  const username = req.body.username
+  const email    = req.body.email
+  const users = new User(username,email)
+  users.save()
+  .then(result=>{
+    console.log("Created Successfully user")
+    return res.redirect('/admin/users')
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+
+exports.getEditUser = (req,res,next) => {
+  const editMode = req.query.edit
+  if(!editMode){
+    res.redirect('/')
+  }
+  const userId = req.params.userId
+  User.findById(userId)
+  .then(user=>{
+    if (!user) {
+      return res.redirect('/');
+    }
+    res.render('admin/edit-user', {
+      pageTitle: 'Edit user',
+      path: '/admin/edit-user',
+      editing: editMode,
+      user: user
+    });
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+
+exports.postEditUser = (req,res,next) => {
+  const updateUserName = req.body.username
+  const updateEmail = req.body.email
+  const id = new mongodb.ObjectId(req.body.userId)
+  new User(updateUserName,updateEmail,id).save()
+  .then(()=>{
+    console.log('edite successfully')
+    res.redirect('/admin/users')
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+
+exports.delUser = (req,res,next) => {
+  const userId = req.body.userId
+  console.log(req.body)
+  User.delById(userId)
+  .then((result)=>{
+    console.log("deleted User")
+    res.redirect('/admin/users')
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+
