@@ -40,8 +40,7 @@ class Product {
     const db = getDb()
     return db.collection('products').find({_id:new mongodb.ObjectId(productId)}).next()
     .then(()=>{
-      // console.log(product)
-      console.log('deleted')
+      console.log(product)
     })
     .catch(err=>console.log(err))
   }
