@@ -1,35 +1,14 @@
-const path = require('path');
+const express = require('express')
 
-const express = require('express');
+const router = express.Router()
 
-const adminController = require('../controllers/admin');
+router.get('/add-product',(req,res,next)=>{
+    res.send('<form action="/product" method="POST"><input type="text" name="product"></input><input type="submit" value="Add Product"></input></form>')
+})
 
-const router = express.Router();
-
-// /admin/add-product => GET
-router.get('/add-product', adminController.getAddProduct);
-
-// /admin/products => GET
-router.get('/products', adminController.getProducts);
-
-// /admin/add-product => POST
-router.post('/add-product', adminController.postAddProduct);
-
-router.get('/edit-product/:productId', adminController.getEditProduct);
-
-router.post('/edit-product', adminController.postEditProduct);
-
-router.post('/delete-product', adminController.postDeleteProduct);
-
-// User
-router.get("/users",adminController.getUsers);
-
-router.get("/addUsers",adminController.addUsers);
-router.post("/addUsers",adminController.postAddUsers);
-
-router.get('/edit-user/:userId', adminController.getEditUser);
-router.post('/edit-user', adminController.postEditUser);
-
-router.post('/delete-user',adminController.delUser)
+router.post('/product',(req,res,next)=>{
+    console.log(req.body)
+})
 
 module.exports = router;
+
