@@ -1,38 +1,19 @@
-const path = require('path');
+const http = require('http');
 
 const express = require('express');
-const bodyParser = require('body-parser');
-const User = require('./models/user');
-const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
 
 const app = express();
 
-app.set('view engine', 'ejs');
-app.set('views', 'views');
+app.use('/',(req,res,next)=>{
+    console.log('one middleware!')
+    next()
+})
+app.use('/users',(req,res,next)=>{
+    console.log('two middleware!')
+    res.send('<p>users</p>')
+})
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use((req, res, next) => {
-  User.findById('6513f539179b315b23a98aec')
-    .then(user => {
-      req.user = new User(user.username,user.email,user.cart,user.id);
-      next();
-    })
-    .catch(err => console.log(err));
-  next()
-});
-
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
-
-app.use(errorController.get404);
-
-mongoConnect(client => {
-  console.log(client);
-  app.listen(3000);
-});
+app.listen(3000,()=>{
+    console.log('server Running 3000')
+})
