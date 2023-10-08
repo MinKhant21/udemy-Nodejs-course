@@ -1,28 +1,53 @@
-const express = require('express');
-const adminRoute = require('./routes/admin');
-const shopRoute = require('./routes/shop');
-const engine = require('express-edge')
 const path = require('path');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const errorController = require('./controllers/error');
+const sequelize = require('./util/database');
 
 const app = express();
 
-// Automatically sets view engine and adds dot notation to app.render
-app.use(engine);
-app.set('views', `${__dirname}/views`);
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const Product = require('./models/product');
+const User = require('./models/user');
+const { where } = require('sequelize');
 
-app.use(express.urlencoded({extended:false}))
-app.use(express.json())
-
-app.use(express.static(path.join(__dirname,'public')))
-
-app.use('/admin/',adminRoute)
-app.use(shopRoute)
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req,res,next)=>{
-    res.status(404).render('404')
+    User.findOne(1)
+    .then(user=>{
+        req.user = user
+        next()
+    })
+    .catch(err=>console.log(err))
 })
 
-app.listen(3000,()=>{
-    console.log('server Running 3000')
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+
+app.use(errorController.get404);
+
+Product.belongsTo(User,{constraints:true,onDelete:'CASCADE'})
+User.hasMany(Product)
+
+sequelize.sync()
+.then(result=>{
+    return User.findOne({where:{id:1}})
 })
+.then(user=>{
+    if(!user){
+        return User.create({name:'kmk',email:"kmk@gmail.com"})
+    }
+    return user
+})
+.then((user)=>{
+    app.listen(3000);
+}).catch(err=>console.log(err))
+
