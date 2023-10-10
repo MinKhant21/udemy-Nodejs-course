@@ -1,6 +1,11 @@
 import express from "express";
 import shopController from '../controller/ShopController'
+import AuthController from '../controller/AuthController'
+import isAuth from "../middleware/isAuth";
 const router  = express.Router();
+
+router.post('/api/login',AuthController.login) 
+router.get('/api/feed',isAuth,AuthController.feed) 
 
 router.get('/', shopController.getIndex);
 // router.get('/products', shopController.getProducts);
@@ -17,5 +22,6 @@ router.get('/orders', shopController.getOrders);
 router.get('/orders/:orderId', shopController.getInvoiceOrders);
 
 // router.get('/checkout', shopController.getCheckout);
+
 
 module.exports = router
