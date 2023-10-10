@@ -5,7 +5,8 @@ exports.getAddProduct = (req, res, next) => {
 
 
 exports.postAddProduct = (req, res, next) => {
-  
+//   console.log(JSON.stringify(req.body))
+  console.log(req.file)
 };
 
 exports.postEditProduct = (req, res, next) => {
