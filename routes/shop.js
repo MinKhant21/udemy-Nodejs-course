@@ -1,9 +1,8 @@
 import express from "express";
-import ShopController from '../controller/ShopController'
+import shopController from '../controller/ShopController'
 const router  = express.Router();
 
-router.get('/', ShopController.getIndex);
-
+router.get('/', shopController.getIndex);
 // router.get('/products', shopController.getProducts);
 
 // router.get('/products/:productId', shopController.getProduct);
@@ -14,7 +13,8 @@ router.get('/', ShopController.getIndex);
 
 // router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
-// router.get('/orders', shopController.getOrders);
+router.get('/orders', shopController.getOrders);
+router.get('/orders/:orderId', shopController.getInvoiceOrders);
 
 // router.get('/checkout', shopController.getCheckout);
 
